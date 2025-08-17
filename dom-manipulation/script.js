@@ -240,9 +240,11 @@ async function syncQuotes() {
     if (!res.ok) throw new Error("Failed to sync quotes");
 
     const serverData = await res.json();
-    console.log("Quotes synced with server:", serverData);
+    console.log("Quotes synced with server!");
+    alert("Quotes synced with server!"); 
   } catch (err) {
     console.error("Error syncing quotes:", err);
+    
   }
 }
 
@@ -395,7 +397,9 @@ function init() {
 
   const syncBtn = document.getElementById("syncBtn");
   if (syncBtn) {
-    syncBtn.addEventListener("click", () => syncQuotes());
+    syncBtn.addEventListener("click", () => syncQuotes(){
+      
+    });
   }
 
   // initial load
@@ -412,3 +416,4 @@ function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+syncQuotes()
