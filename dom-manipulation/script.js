@@ -397,9 +397,9 @@ function init() {
 
   const syncBtn = document.getElementById("syncBtn");
   if (syncBtn) {
-    syncBtn.addEventListener("click", () => syncQuotes(){
+    syncBtn.addEventListener("click", () => syncQuotes()
       
-    });
+    );
   }
 
   // initial load
@@ -416,4 +416,3 @@ function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
-syncQuotes()
