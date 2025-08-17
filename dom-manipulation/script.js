@@ -39,6 +39,34 @@ function saveQuotes() {
   setStatus(`Saved ${quotes.length} quotes.`);
   refreshListsAndFilters();
 }
+function createAddQuoteForm() {
+  const form = document.createElement("form");
+  form.id = "add-quote-form";
+
+  const textInput = document.createElement("input");
+  textInput.type = "text";
+  textInput.placeholder = "Enter quote...";
+  textInput.required = true;
+
+  const categoryInput = document.createElement("input");
+  categoryInput.type = "text";
+  categoryInput.placeholder = "Enter category...";
+  categoryInput.required = true;
+
+  const btn = document.createElement("button");
+  btn.type = "submit";
+  btn.textContent = "Add Quote";
+
+  form.append(textInput, categoryInput, btn);
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    addQuote(textInput.value, categoryInput.value);
+    form.reset();
+  });
+
+  document.body.appendChild(form);
+}
 
 function loadQuotes() {
   try {
@@ -201,6 +229,23 @@ function exportToJsonFile() {
     setStatus('Exported quotes to JSON.');
   } catch (e) { alert('Export failed.'); console.error(e); }
 }
+async function syncQuotes() {
+  try {
+    const res = await fetch(SERVER.syncUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(quotes),
+    });
+
+    if (!res.ok) throw new Error("Failed to sync quotes");
+
+    const serverData = await res.json();
+    console.log("Quotes synced with server:", serverData);
+  } catch (err) {
+    console.error("Error syncing quotes:", err);
+  }
+}
+
 
 function importFromJsonFile(event) {
   const file = event?.target?.files?.[0];
@@ -310,6 +355,7 @@ async function syncAll() {
   setTimeout(() => setNotice(''), 3000);
 }
 
+
 function startAutoSync() {
   setInterval(syncAll, SERVER.syncIntervalMs);
 }
@@ -339,7 +385,23 @@ function wireEvents() {
 }
 
 function init() {
+  createAddQuoteForm();
+
+  const filterSelect = document.getElementById("categoryFilter");
+  filterSelect.addEventListener("change", (e) => {
+    localStorage.setItem("selectedCategory", e.target.value);
+    displayQuote();
+  });
+
+  const syncBtn = document.getElementById("syncBtn");
+  if (syncBtn) {
+    syncBtn.addEventListener("click", () => syncQuotes());
+  }
+
+  // initial load
   loadQuotes();
+  displayQuote();
+ 
   if (!localStorage.getItem(LS_FILTER_KEY)) localStorage.setItem(LS_FILTER_KEY, 'all');
   refreshListsAndFilters();
   restoreLastViewedOrRandom();
