@@ -244,7 +244,9 @@ function importFromJsonFile(event) {
 }
 
 // ====== Server sync (mock) ======
-async function fetchFromServer() {
+async function fetchQuotesFromServer() {
+  await fetchQuotesFromServer();
+
   try {
     const res = await fetch(SERVER.fetchUrl);
     const data = await res.json();
